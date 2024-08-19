@@ -1,0 +1,40 @@
+{
+  "name": "by-express",
+  "version": "1.0.0",
+  "description": "A Command Line tool for creating express api web server",
+  "main": "dist/index.js",
+  "bin": {
+    "by-express": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "dev": "ts-node index.ts",
+    "build": "npx tsc"
+  },
+  "keywords": [
+    "command-line",
+    "tool",
+    "express-app",
+    "create"
+  ],
+  "author": "Saif Khan <saifkhan.otw@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0",
+    "conf": "^13.0.1",
+    "prompts": "^2.4.2",
+    "validate-npm-package-name": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.4.1",
+    "@types/prompts": "^2.4.9",
+    "@types/validate-npm-package-name": "^4.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
