@@ -1,16 +1,16 @@
 #! /usr/bin/env node
 
 import chalk from 'chalk'
-// import Conf from 'conf'
+import Conf from 'conf'
 import { Command } from 'commander'
 import prompts from 'prompts'
 import type { InitialReturnValue } from "prompts";
-import * as packageJson from "./package.json"
-import { getPkgManager, PackageManager } from './helpers/get-pkg-manager';
-import { validateNpmName } from './helpers/validate-pkg';
 import { basename, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { isFolderEmpty } from './helpers/is-folder-empty';
+import { getPkgManager, PackageManager } from './helpers/get-pkg-manager.js';
+import { isFolderEmpty } from './helpers/is-folder-empty.js';
+import { validateNpmName } from './helpers/validate-pkg.js';
+import packageJson from "./package.json"
 
 // const _chalk = await import("chalk").then(m=>m.default);
 
@@ -37,7 +37,7 @@ const onPromptState = (state: {
 
 async function init() {
 
-    // const conf = new Conf()
+    const conf = new Conf({projectName:"lets-go-with-express"})
 
     let projectName: string | undefined;
 
@@ -127,7 +127,7 @@ async function init() {
     const getPrefOrDefault = (opt: string) => preferences[opt];
 
     console.log(opts)
-    
+
     if (!opts.useEjs && !args.includes('--no-ejs')) {
         // if (skipPrompt) {
         //     opts.eslint = getPrefOrDefault('eslint')
