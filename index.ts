@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#! /usr/bin/env node --no-warnings
 
 import chalk from 'chalk'
 import Conf from 'conf'
@@ -10,7 +10,8 @@ import { existsSync } from 'node:fs';
 import { getPkgManager, PackageManager } from './helpers/get-pkg-manager.js';
 import { isFolderEmpty } from './helpers/is-folder-empty.js';
 import { validateNpmName } from './helpers/validate-pkg.js';
-import packageJson from "./package.json"
+import packageJson from "./package.json" assert { type: "json"}
+import { createApp } from './create-app.js';
 
 // const _chalk = await import("chalk").then(m=>m.default);
 
@@ -37,7 +38,7 @@ const onPromptState = (state: {
 
 async function init() {
 
-    const conf = new Conf({projectName:"lets-go-with-express"})
+    const conf = new Conf({ projectName: "lets-go-with-express" })
 
     let projectName: string | undefined;
 
@@ -50,6 +51,7 @@ async function init() {
         .arguments('[project-directory]')
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
+        .option("-m, --mongoose", "Initialize database with mongoose(MongoDB)")
         .option("--use-ejs", "Initialize with templating view engine using ejs")
         .action((name) => {
             if (name && !name.startsWith('--no-')) {
@@ -121,12 +123,31 @@ async function init() {
     }
 
     const preferences = {
-        useEjs: false
+        useEjs: false,
+        mongoose:false
     }
 
     const getPrefOrDefault = (opt: string) => preferences[opt];
 
-    console.log(opts)
+    // console.log(opts)
+
+    if (!opts.mongoose && !args.includes('--no-mongoose')) {
+        // if (skipPrompt) {
+        //     opts.eslint = getPrefOrDefault('eslint')
+        // } else {
+        const { eslint } = await prompts({
+            onState: onPromptState,
+            type: 'toggle',
+            name: 'eslint',
+            message: `Would you like to use ${chalk.blue('Mongoose')}?`,
+            initial: getPrefOrDefault('mongoose'),
+            active: 'Yes',
+            inactive: 'No',
+        })
+        opts.mongoose = Boolean(eslint)
+        preferences.mongoose = Boolean(eslint)
+        // }
+    }
 
     if (!opts.useEjs && !args.includes('--no-ejs')) {
         // if (skipPrompt) {
@@ -147,11 +168,18 @@ async function init() {
         // }
     }
 
-    console.log({ projectName, ...preferences })
+    try {
+        await createApp({
+            appPath: projectName,
+            packageManager:packageManager,
+            mongoose: opts.mongoose,
+            useEjs: opts.useEjs
+        })
+    } catch (error) {
+        console.log(error)
+    }
     process.exit(0);
-    // if (!projectName) {
-    //     console.log(first)
-    // }
+
 }
 
 init();
