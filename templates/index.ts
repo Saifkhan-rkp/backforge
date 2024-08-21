@@ -67,28 +67,28 @@ export const installTemplate = async ({
          * Default dependencies.
          */
         dependencies: {
-            cors: "2.8.5",
-            dotenv: "16.4.5",
-            express: "4.19.2",
-            morgan:"1.10.0"
-
+            "body-parser":"^1.20.2",
+            cors: "^2.8.5",
+            dotenv: "^16.4.5",
+            express: "^4.19.2",
+            morgan:"^1.10.0"
         },
         devDependencies: {
-            nodemon: "3.1.4"
+            nodemon: "^3.1.4"
         },
     };
 
     if (mongoose) {
         packageJson.dependencies = {
             ...packageJson.dependencies,
-            mongoose: "8.5.3"
+            mongoose: "^8.5.3"
         }
     }
 
     if (useEjs) {
         packageJson.dependencies = {
             ...packageJson.dependencies,
-            "ejs-mate": "4.0.0"
+            "ejs-mate": "^4.0.0"
         }
     }
     const devDeps = Object.keys(packageJson.devDependencies).length;
