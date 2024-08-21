@@ -1,16 +1,17 @@
-#! /usr/bin/env node
+#! /usr/bin/env node --no-warnings
 
 import chalk from 'chalk'
-// import Conf from 'conf'
+import Conf from 'conf'
 import { Command } from 'commander'
 import prompts from 'prompts'
 import type { InitialReturnValue } from "prompts";
-import * as packageJson from "./package.json"
-import { getPkgManager, PackageManager } from './helpers/get-pkg-manager';
-import { validateNpmName } from './helpers/validate-pkg';
 import { basename, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { isFolderEmpty } from './helpers/is-folder-empty';
+import { getPkgManager, PackageManager } from './helpers/get-pkg-manager.js';
+import { isFolderEmpty } from './helpers/is-folder-empty.js';
+import { validateNpmName } from './helpers/validate-pkg.js';
+import packageJson from "./package.json" assert { type: "json"}
+import { createApp } from './create-app.js';
 
 // const _chalk = await import("chalk").then(m=>m.default);
 
@@ -37,7 +38,7 @@ const onPromptState = (state: {
 
 async function init() {
 
-    // const conf = new Conf()
+    const conf = new Conf({ projectName: "lets-go-with-express" })
 
     let projectName: string | undefined;
 
@@ -50,6 +51,8 @@ async function init() {
         .arguments('[project-directory]')
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
+        .option("-m, --mongoose", "Initialize database with mongoose(MongoDB)")
+        .option("-e, --empty", "Initialize empty express app with template")
         .option("--use-ejs", "Initialize with templating view engine using ejs")
         .action((name) => {
             if (name && !name.startsWith('--no-')) {
@@ -120,14 +123,33 @@ async function init() {
         process.exit(1)
     }
 
-    const preferences = {
-        useEjs: false
+    const preferences:any = {
+        useEjs: false,
+        mongoose:false
     }
 
     const getPrefOrDefault = (opt: string) => preferences[opt];
 
-    console.log(opts)
-    
+    // console.log(opts)
+
+    if (!opts.mongoose && !args.includes('--no-mongoose')) {
+        // if (skipPrompt) {
+        //     opts.eslint = getPrefOrDefault('eslint')
+        // } else {
+        const { eslint } = await prompts({
+            onState: onPromptState,
+            type: 'toggle',
+            name: 'eslint',
+            message: `Would you like to use ${chalk.blue('Mongoose')}?`,
+            initial: getPrefOrDefault('mongoose'),
+            active: 'Yes',
+            inactive: 'No',
+        })
+        opts.mongoose = Boolean(eslint)
+        preferences.mongoose = Boolean(eslint)
+        // }
+    }
+
     if (!opts.useEjs && !args.includes('--no-ejs')) {
         // if (skipPrompt) {
         //     opts.eslint = getPrefOrDefault('eslint')
@@ -147,11 +169,19 @@ async function init() {
         // }
     }
 
-    console.log({ projectName, ...preferences })
-    process.exit(0);
-    // if (!projectName) {
-    //     console.log(first)
-    // }
+    try {
+        await createApp({
+            appPath: projectName,
+            packageManager:packageManager,
+            mongoose: opts.mongoose,
+            useEjs: opts.useEjs,
+            empty: opts.empty
+        })
+    } catch (error) {
+        console.log(error)
+    }
+    // process.exit(0);
+
 }
 
 init();

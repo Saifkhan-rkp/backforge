@@ -2,7 +2,7 @@
   "name": "by-express",
   "version": "1.0.0",
   "description": "A Command Line tool for creating express api web server",
-  "main": "dist/index.js",
+  "type": "module",
   "bin": {
     "by-express": "dist/index.js"
   },
@@ -27,6 +27,7 @@
     "chalk": "^4.1.2",
     "commander": "^12.1.0",
     "conf": "^13.0.1",
+    "fast-glob": "^3.3.2",
     "prompts": "^2.4.2",
     "validate-npm-package-name": "^5.0.1"
   },
@@ -34,7 +35,11 @@
     "@types/node": "^22.4.1",
     "@types/prompts": "^2.4.9",
     "@types/validate-npm-package-name": "^4.0.2",
+    "@vercel/ncc": "^0.38.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=18.18.0"
   }
 }
