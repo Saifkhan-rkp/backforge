@@ -52,6 +52,7 @@ async function init() {
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
         .option("-m, --mongoose", "Initialize database with mongoose(MongoDB)")
+        .option("-e, --empty", "Initialize empty express app with template")
         .option("--use-ejs", "Initialize with templating view engine using ejs")
         .action((name) => {
             if (name && !name.startsWith('--no-')) {
@@ -122,7 +123,7 @@ async function init() {
         process.exit(1)
     }
 
-    const preferences = {
+    const preferences:any = {
         useEjs: false,
         mongoose:false
     }
@@ -173,12 +174,13 @@ async function init() {
             appPath: projectName,
             packageManager:packageManager,
             mongoose: opts.mongoose,
-            useEjs: opts.useEjs
+            useEjs: opts.useEjs,
+            empty: opts.empty
         })
     } catch (error) {
         console.log(error)
     }
-    process.exit(0);
+    // process.exit(0);
 
 }
 

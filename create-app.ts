@@ -6,7 +6,8 @@ import { mkdirSync } from "node:fs";
 import { PackageManager } from "./helpers/get-pkg-manager";
 import { isFolderEmpty } from "./helpers/is-folder-empty.js";
 import { getOnline } from './helpers/is-online.js';
-
+import { TemplateMode, TemplateType } from "./templates/types.js";
+import { installTemplate } from './templates/index.js';
 
 // checks whether folder have proper access permission  
 async function isWriteable(directory: string): Promise<boolean> {
@@ -22,13 +23,18 @@ export async function createApp({
     appPath,
     packageManager,
     mongoose,
-    useEjs
+    useEjs,
+    empty
 }: {
     appPath: string,
     packageManager: PackageManager,
     mongoose: boolean,
-    useEjs: boolean
+    useEjs: boolean,
+    empty: boolean
 }): Promise<void> {
+
+    const mode: TemplateMode = 'js'
+    const template: TemplateType = `default${empty ? '-empty' : ''}`
 
     const root = resolve(appPath)
     console.log(root, dirname(root));
@@ -59,7 +65,42 @@ export async function createApp({
 
     process.chdir(root)
 
-    const packageJsonPath = join(root, 'package.json')
+    // const packageJsonPath = join(root, 'package.json')
     let hasPackageJson = false
 
+    await installTemplate({
+        appName: appName,
+        root:root,
+        mode:mode,
+        template:template,
+        isOnline:isOnline,
+        packageManager:packageManager,
+        useEjs:useEjs,
+        mongoose:mongoose
+    })
+
+    let cdpath: string
+    if (join(originalDirectory, appName) === appPath) {
+        cdpath = appName
+    } else {
+        cdpath = appPath
+    }
+
+    console.log(`${chalk.green('Success!')} Created ${appName} at ${appPath}`)
+
+    if (hasPackageJson) {
+        console.log('Inside that directory, you can run several commands:')
+        console.log()
+        console.log(chalk.cyan(`  ${packageManager} ${useYarn ? '' : 'run '}dev`))
+        console.log('    Starts the development server.')
+        console.log()
+        console.log(chalk.cyan(`  ${packageManager} start`))
+        console.log('    Runs the built app in production mode.')
+        console.log()
+        console.log('We suggest that you begin by typing:')
+        console.log()
+        console.log(chalk.cyan('  cd'), cdpath)
+        console.log(`  ${chalk.cyan(`${packageManager} ${useYarn ? '' : 'run '}dev`)}`)
+    }
+    console.log()
 }

@@ -1,8 +1,8 @@
 import { PackageManager } from '../helpers/get-pkg-manager.js'
 
 export type TemplateType =
-    | "plain"
-    | "plain-empty"
+    | "default"
+    | "default-empty"
     | "modern"
     | "modern-empty";
 
