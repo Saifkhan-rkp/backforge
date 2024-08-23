@@ -2,12 +2,13 @@ import chalk from 'chalk'
 import { basename, dirname, join, resolve } from "node:path";
 import { W_OK } from 'node:constants'
 import { access } from 'node:fs/promises'
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { PackageManager } from "./helpers/get-pkg-manager";
 import { isFolderEmpty } from "./helpers/is-folder-empty.js";
 import { getOnline } from './helpers/is-online.js';
 import { TemplateMode, TemplateType } from "./templates/types.js";
 import { installTemplate } from './templates/index.js';
+import { tryGitInit } from './helpers/try-git';
 
 // checks whether folder have proper access permission  
 async function isWriteable(directory: string): Promise<boolean> {
@@ -22,17 +23,15 @@ async function isWriteable(directory: string): Promise<boolean> {
 export async function createApp({
     appPath,
     packageManager,
-    mongoose,
-    useEjs,
-    empty
+    empty,
+    disableGit
 }: {
     appPath: string,
     packageManager: PackageManager,
-    mongoose: boolean,
-    useEjs: boolean,
-    empty: boolean
+    empty: boolean,
+    disableGit:boolean
 }): Promise<void> {
-
+    /** Currently setting mode is only for js  */
     const mode: TemplateMode = 'js'
     const template: TemplateType = `default${empty ? '-empty' : ''}`
 
@@ -65,19 +64,25 @@ export async function createApp({
 
     process.chdir(root)
 
-    // const packageJsonPath = join(root, 'package.json')
+    const packageJsonPath = join(root, 'package.json')
     let hasPackageJson = false
 
     await installTemplate({
         appName: appName,
-        root:root,
-        mode:mode,
-        template:template,
-        isOnline:isOnline,
-        packageManager:packageManager,
-        useEjs:useEjs,
-        mongoose:mongoose
+        root: root,
+        mode: mode,
+        template: template,
+        isOnline: isOnline,
+        packageManager: packageManager,
     })
+
+    if (disableGit) {
+        console.log('Skipping git initialization.')
+        console.log()
+    } else if (tryGitInit(root)) {
+        console.log('Initialized a git repository.')
+        console.log()
+    }
 
     let cdpath: string
     if (join(originalDirectory, appName) === appPath) {
@@ -87,6 +92,9 @@ export async function createApp({
     }
 
     console.log(`${chalk.green('Success!')} Created ${appName} at ${appPath}`)
+
+    /** Checking if package.json is available in app */
+    hasPackageJson = existsSync(packageJsonPath)
 
     if (hasPackageJson) {
         console.log('Inside that directory, you can run several commands:')

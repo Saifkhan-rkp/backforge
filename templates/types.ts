@@ -21,6 +21,4 @@ export interface InstallTemplateArgs {
     isOnline: boolean;
     template: TemplateType;
     mode: TemplateMode;
-    useEjs: boolean;
-    mongoose: boolean;
 }
