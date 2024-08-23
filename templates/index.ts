@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import { GetTemplateFileArgs, InstallTemplateArgs } from "./types.js";
 import { copy } from "../helpers/copy.js";
 import { fileURLToPath } from "url";
+import { install } from "../helpers/install.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,8 +23,6 @@ export const installTemplate = async ({
     mode,
     template,
     packageManager,
-    useEjs,
-    mongoose,
 }: InstallTemplateArgs) => {
 
     console.log(chalk.bold(`Using ${packageManager}.`));
@@ -35,9 +34,6 @@ export const installTemplate = async ({
 
     const templatePath = path.join(__dirname, template, mode);
     const copySource = ["**"]
-    if (!mongoose) {
-        copySource.push("!config/connectionDB." + mode)
-    }
 
     await copy(copySource, root, {
         parents: true,
@@ -53,7 +49,7 @@ export const installTemplate = async ({
             }
         }
 
-    }).then(() => console.log("debug3 : done all process"))
+    });
 
     const packageJson: any = {
         name: appName,
@@ -67,30 +63,19 @@ export const installTemplate = async ({
          * Default dependencies.
          */
         dependencies: {
-            "body-parser":"^1.20.2",
+            "body-parser": "^1.20.2",
             cors: "^2.8.5",
             dotenv: "^16.4.5",
             express: "^4.19.2",
-            morgan:"^1.10.0"
+            "http-status": "^1.7.4",
+            mongoose: "^8.5.3",
+            morgan: "^1.10.0"
         },
         devDependencies: {
             nodemon: "^3.1.4"
         },
     };
 
-    if (mongoose) {
-        packageJson.dependencies = {
-            ...packageJson.dependencies,
-            mongoose: "^8.5.3"
-        }
-    }
-
-    if (useEjs) {
-        packageJson.dependencies = {
-            ...packageJson.dependencies,
-            "ejs-mate": "^4.0.0"
-        }
-    }
     const devDeps = Object.keys(packageJson.devDependencies).length;
     if (!devDeps) delete packageJson.devDependencies;
 
@@ -98,4 +83,18 @@ export const installTemplate = async ({
         path.join(root, "package.json"),
         JSON.stringify(packageJson, null, 2) + os.EOL,
     );
+
+    console.log("\nInstalling dependencies:");
+    for (const dependency in packageJson.dependencies)
+        console.log(`- ${chalk.cyan(dependency)}`);
+
+    if (devDeps) {
+        console.log("\nInstalling devDependencies:");
+        for (const dependency in packageJson.devDependencies)
+            console.log(`- ${chalk.cyan(dependency)}`);
+    }
+
+    console.log();
+
+    await install(packageManager, isOnline).catch(err=> console.log("Seems Insall giving problem here \n Try run ", chalk.yellow(err), " in your project directory"));
 }

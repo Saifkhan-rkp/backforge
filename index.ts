@@ -51,9 +51,8 @@ async function init() {
         .arguments('[project-directory]')
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
-        .option("-m, --mongoose", "Initialize database with mongoose(MongoDB)")
         .option("-e, --empty", "Initialize empty express app with template")
-        .option("--use-ejs", "Initialize with templating view engine using ejs")
+        .option('--disable-git', `Skip initializing a git repository.`)
         .action((name) => {
             if (name && !name.startsWith('--no-')) {
                 projectName = name
@@ -77,7 +76,7 @@ async function init() {
             type: 'text',
             name: 'path',
             message: 'What is your project named?',
-            initial: 'my-app',
+            initial: 'my-express-app',
             validate: (name) => {
                 const validation = validateNpmName(basename(resolve(name)))
                 if (!validation.valid) {
@@ -123,59 +122,58 @@ async function init() {
         process.exit(1)
     }
 
-    const preferences:any = {
-        useEjs: false,
-        mongoose:false
-    }
+    // const preferences:any = {
+    //     useEjs: false,
+    //     mongoose:false
+    // }
 
-    const getPrefOrDefault = (opt: string) => preferences[opt];
+    // const getPrefOrDefault = (opt: string) => preferences[opt];
 
     // console.log(opts)
 
-    if (!opts.mongoose && !args.includes('--no-mongoose')) {
-        // if (skipPrompt) {
-        //     opts.eslint = getPrefOrDefault('eslint')
-        // } else {
-        const { eslint } = await prompts({
-            onState: onPromptState,
-            type: 'toggle',
-            name: 'eslint',
-            message: `Would you like to use ${chalk.blue('Mongoose')}?`,
-            initial: getPrefOrDefault('mongoose'),
-            active: 'Yes',
-            inactive: 'No',
-        })
-        opts.mongoose = Boolean(eslint)
-        preferences.mongoose = Boolean(eslint)
-        // }
-    }
+    // if (!opts.mongoose && !args.includes('--no-mongoose')) {
+    //     // if (skipPrompt) {
+    //     //     opts.eslint = getPrefOrDefault('eslint')
+    //     // } else {
+    //     const { eslint } = await prompts({
+    //         onState: onPromptState,
+    //         type: 'toggle',
+    //         name: 'eslint',
+    //         message: `Would you like to use ${chalk.blue('Mongoose')}?`,
+    //         initial: getPrefOrDefault('mongoose'),
+    //         active: 'Yes',
+    //         inactive: 'No',
+    //     })
+    //     opts.mongoose = Boolean(eslint)
+    //     preferences.mongoose = Boolean(eslint)
+    //     // }
+    // }
 
-    if (!opts.useEjs && !args.includes('--no-ejs')) {
-        // if (skipPrompt) {
-        //     opts.eslint = getPrefOrDefault('eslint')
-        // } else {
-        const styledEjs = chalk.blue('Ejs')
-        const { eslint } = await prompts({
-            onState: onPromptState,
-            type: 'toggle',
-            name: 'eslint',
-            message: `Would you like to use ${styledEjs}?`,
-            initial: getPrefOrDefault('useEjs'),
-            active: 'Yes',
-            inactive: 'No',
-        })
-        opts.useEjs = Boolean(eslint)
-        preferences.useEjs = Boolean(eslint)
-        // }
-    }
+    // if (!opts.useEjs && !args.includes('--no-ejs')) {
+    //     // if (skipPrompt) {
+    //     //     opts.eslint = getPrefOrDefault('eslint')
+    //     // } else {
+    //     const styledEjs = chalk.blue('Ejs')
+    //     const { eslint } = await prompts({
+    //         onState: onPromptState,
+    //         type: 'toggle',
+    //         name: 'eslint',
+    //         message: `Would you like to use ${styledEjs}?`,
+    //         initial: getPrefOrDefault('useEjs'),
+    //         active: 'Yes',
+    //         inactive: 'No',
+    //     })
+    //     opts.useEjs = Boolean(eslint)
+    //     preferences.useEjs = Boolean(eslint)
+    //     // }
+    // }
 
     try {
         await createApp({
             appPath: projectName,
             packageManager:packageManager,
-            mongoose: opts.mongoose,
-            useEjs: opts.useEjs,
-            empty: opts.empty
+            empty: opts.empty,
+            disableGit: opts.disableGit
         })
     } catch (error) {
         console.log(error)

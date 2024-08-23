@@ -23,7 +23,6 @@ export const copy = async (
     throw new TypeError('`src` and `dest` are required')
   }
 
-  console.log("debug 4 : source ", source, dest, cwd)
   const sourceFiles = await glob.async(source, {
     cwd,
     dot: true,
@@ -33,7 +32,6 @@ export const copy = async (
 
   const destRelativeToCwd = cwd ? resolve(cwd, dest) : dest
 
-  console.log("debug 1 : " ,destRelativeToCwd, sourceFiles)
   
   return Promise.all(
     sourceFiles.map(async (p) => {
@@ -47,9 +45,7 @@ export const copy = async (
       
       // Ensure the destination directory exists
       await mkdir(dirname(to), { recursive: true })
-      
-      console.log("debug 2 : " ,dirName, baseName, from, to)
-      
+            
       return copyFile(from, to)
     })
   )
