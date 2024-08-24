@@ -8,7 +8,7 @@ import { isFolderEmpty } from "./helpers/is-folder-empty.js";
 import { getOnline } from './helpers/is-online.js';
 import { TemplateMode, TemplateType } from "./templates/types.js";
 import { installTemplate } from './templates/index.js';
-import { tryGitInit } from './helpers/try-git';
+import { tryGitInit } from './helpers/try-git.js';
 
 // checks whether folder have proper access permission  
 async function isWriteable(directory: string): Promise<boolean> {
