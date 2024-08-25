@@ -43,6 +43,13 @@ export const installTemplate = async ({
                 case "gitignore": {
                     return `.${name}`;
                 }
+                case "env-example": {
+                    
+                    return `.${name.split("-").join(".")}`
+                }
+                case "README-template.md":{
+                    return `README.md`
+                }
                 default: {
                     return name;
                 }

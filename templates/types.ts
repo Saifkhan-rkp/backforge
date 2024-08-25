@@ -3,8 +3,8 @@ import { PackageManager } from '../helpers/get-pkg-manager.js'
 export type TemplateType =
     | "default"
     | "default-empty"
-    | "modern"
-    | "modern-empty";
+    | "basic"
+    | "basic-empty";
 
 export type TemplateMode = "js" | "ts";
 

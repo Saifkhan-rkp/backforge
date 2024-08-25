@@ -52,6 +52,7 @@ async function init() {
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
         .option("-e, --empty", "Initialize empty express app with template")
+        .option("--basic", "Initialize with basic template of express app")
         .option('--disable-git', `Skip initializing a git repository.`)
         .action((name) => {
             if (name && !name.startsWith('--no-')) {
@@ -173,7 +174,8 @@ async function init() {
             appPath: projectName,
             packageManager:packageManager,
             empty: opts.empty,
-            disableGit: opts.disableGit
+            disableGit: opts.disableGit,
+            basic: opts.basic
         })
     } catch (error) {
         console.log(error)

@@ -24,16 +24,18 @@ export async function createApp({
     appPath,
     packageManager,
     empty,
-    disableGit
+    disableGit,
+    basic
 }: {
     appPath: string,
     packageManager: PackageManager,
     empty: boolean,
-    disableGit:boolean
+    disableGit: boolean
+    basic: boolean
 }): Promise<void> {
     /** Currently setting mode is only for js  */
     const mode: TemplateMode = 'js'
-    const template: TemplateType = `default${empty ? '-empty' : ''}`
+    const template: TemplateType = `${basic ? "basic" : "default"}${empty ? '-empty' : ''}`
 
     const root = resolve(appPath)
     console.log(root, dirname(root));

@@ -11,7 +11,7 @@ const serevr = http.createServer(app);
 mongoose
     .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() =>
-        serevr.listen(process.env.PORT, () => {
+        serevr.listen(PORT, () => {
             console.log(`Server is on PORT: ${PORT} \n\n \tdev link: http://localhost:${PORT}`);
         })
     )
