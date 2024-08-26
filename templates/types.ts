@@ -1,4 +1,4 @@
-import { PackageManager } from '../helpers/get-pkg-manager.js'
+import { PackageManager } from '../utils/get-pkg-manager.js'
 
 export type TemplateType =
     | "default"
