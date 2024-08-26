@@ -5,7 +5,7 @@ import { access } from 'node:fs/promises'
 import { existsSync, mkdirSync } from "node:fs";
 import { PackageManager } from "./utils/get-pkg-manager";
 import { isFolderEmpty } from "./utils/is-folder-empty.js";
-import { getOnline } from './utils/is-online.js';
+import { checkOnline } from './utils/check-online.js';
 import { TemplateMode, TemplateType } from "./templates/types.js";
 import { installTemplate } from './templates/index.js';
 import { tryGitInit } from './utils/try-git.js';
@@ -60,7 +60,7 @@ export async function createApp({
     }
 
     const useYarn = packageManager === 'yarn'
-    const isOnline = !useYarn || (await getOnline())
+    const isOnline = !useYarn || (await checkOnline())
     const originalDirectory = process.cwd()
 
     console.log(`Creating a new express app in ${chalk.green(root)} with ${chalk.yellow("by-express")}.`)

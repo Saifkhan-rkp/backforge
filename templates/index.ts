@@ -84,6 +84,11 @@ export const installTemplate = async ({
     };
 
     if (mode === "ts") {
+        packageJson.scripts = {
+            dev:"nodemon index.ts",
+            start:"node dist/index.js",
+            build:"tsc"
+        }
         packageJson.devDependencies = {
             ...packageJson.devDependencies,
             "@types/cors": "^2.8.17",

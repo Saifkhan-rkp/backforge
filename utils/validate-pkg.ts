@@ -1,12 +1,11 @@
 import validateProjectName from 'validate-npm-package-name'
 
 type ValidateNpmNameResult =
-     {
+    | {
         valid: false
         problems: string[]
     }
-    |
-    {
+    | {
         valid: true
         problems: string[]
     }
@@ -23,6 +22,6 @@ export function validateNpmName(name: string): ValidateNpmNameResult {
             ],
         }
     }
-    
-    return { valid: true, problems:[] }
+
+    return { valid: true, problems: [] }
 }
