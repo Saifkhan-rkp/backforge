@@ -1,6 +1,6 @@
 {
   "name": "backforge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Command Line tool for creating express api web server",
   "type": "module",
   "repository": {

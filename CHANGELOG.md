@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Saifkhan-rkp/backforge/compare/v1.0.0...v1.0.1) (2024-08-26)
+
+
+### Bug Fixes
+
+* missing files added in default/ts template ([8b64945](https://github.com/Saifkhan-rkp/backforge/commit/8b64945e0c2f49323a409ea919ebe6c2de9c2d9b))
+
 ## 1.0.0 (2024-08-26)
 
 
