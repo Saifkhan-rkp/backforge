@@ -15,13 +15,11 @@ function getProxy(): string | undefined {
   }
 }
 
-export async function getOnline(): Promise<boolean> {
+export async function checkOnline(): Promise<boolean> {
   try {
     await lookup('registry.yarnpkg.com')
-    // If DNS lookup succeeds, we are online
     return true
   } catch {
-    // The DNS lookup failed, but we are still fine as long as a proxy has been set
     const proxy = getProxy()
     if (!proxy) {
       return false

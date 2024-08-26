@@ -3,12 +3,12 @@ import { basename, dirname, join, resolve } from "node:path";
 import { W_OK } from 'node:constants'
 import { access } from 'node:fs/promises'
 import { existsSync, mkdirSync } from "node:fs";
-import { PackageManager } from "./helpers/get-pkg-manager";
-import { isFolderEmpty } from "./helpers/is-folder-empty.js";
-import { getOnline } from './helpers/is-online.js';
+import { PackageManager } from "./utils/get-pkg-manager";
+import { isFolderEmpty } from "./utils/is-folder-empty.js";
+import { checkOnline } from './utils/check-online.js';
 import { TemplateMode, TemplateType } from "./templates/types.js";
 import { installTemplate } from './templates/index.js';
-import { tryGitInit } from './helpers/try-git.js';
+import { tryGitInit } from './utils/try-git.js';
 
 // checks whether folder have proper access permission  
 async function isWriteable(directory: string): Promise<boolean> {
@@ -23,17 +23,21 @@ async function isWriteable(directory: string): Promise<boolean> {
 export async function createApp({
     appPath,
     packageManager,
+    typescript,
     empty,
-    disableGit
+    disableGit,
+    basic
 }: {
     appPath: string,
     packageManager: PackageManager,
+    typescript: boolean,
     empty: boolean,
-    disableGit:boolean
+    disableGit: boolean
+    basic: boolean
 }): Promise<void> {
-    /** Currently setting mode is only for js  */
-    const mode: TemplateMode = 'js'
-    const template: TemplateType = `default${empty ? '-empty' : ''}`
+    /** Currently ts mode is only for default template */
+    const mode: TemplateMode = typescript ? "ts": "js";
+    const template: TemplateType = `${basic ? "basic" : "default"}${empty ? '-empty' : ''}`
 
     const root = resolve(appPath)
     console.log(root, dirname(root));
@@ -56,7 +60,7 @@ export async function createApp({
     }
 
     const useYarn = packageManager === 'yarn'
-    const isOnline = !useYarn || (await getOnline())
+    const isOnline = !useYarn || (await checkOnline())
     const originalDirectory = process.cwd()
 
     console.log(`Creating a new express app in ${chalk.green(root)} with ${chalk.yellow("by-express")}.`)

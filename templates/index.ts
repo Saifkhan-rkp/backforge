@@ -3,9 +3,9 @@ import chalk from "chalk";
 import os from "os";
 import fs from "fs/promises";
 import { GetTemplateFileArgs, InstallTemplateArgs } from "./types.js";
-import { copy } from "../helpers/copy.js";
+import { copy } from "../utils/copy.js";
 import { fileURLToPath } from "url";
-import { install } from "../helpers/install.js";
+import { install } from "../utils/install.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -43,6 +43,13 @@ export const installTemplate = async ({
                 case "gitignore": {
                     return `.${name}`;
                 }
+                case "env-example": {
+
+                    return `.${name.split("-").join(".")}`
+                }
+                case "README-template.md": {
+                    return `README.md`
+                }
                 default: {
                     return name;
                 }
@@ -76,6 +83,22 @@ export const installTemplate = async ({
         },
     };
 
+    if (mode === "ts") {
+        packageJson.scripts = {
+            dev:"nodemon index.ts",
+            start:"node dist/index.js",
+            build:"tsc"
+        }
+        packageJson.devDependencies = {
+            ...packageJson.devDependencies,
+            "@types/cors": "^2.8.17",
+            "@types/express": "^4.17.21",
+            "@types/morgan": "^1.9.9",
+            "@types/node": "^22.5.0",
+            "ts-node": "^10.9.2"
+        }
+    }
+
     const devDeps = Object.keys(packageJson.devDependencies).length;
     if (!devDeps) delete packageJson.devDependencies;
 
@@ -96,5 +119,5 @@ export const installTemplate = async ({
 
     console.log();
 
-    await install(packageManager, isOnline).catch(err=> console.log("Seems Insall giving problem here \n Try run ", chalk.yellow(err), " in your project directory"));
+    await install(packageManager, isOnline).catch(err => console.log("Seems Insall giving problem here \n Try run ", chalk.yellow(err), " in your project directory"));
 }

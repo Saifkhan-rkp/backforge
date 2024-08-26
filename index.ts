@@ -7,9 +7,9 @@ import prompts from 'prompts'
 import type { InitialReturnValue } from "prompts";
 import { basename, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { getPkgManager, PackageManager } from './helpers/get-pkg-manager.js';
-import { isFolderEmpty } from './helpers/is-folder-empty.js';
-import { validateNpmName } from './helpers/validate-pkg.js';
+import { getPkgManager, PackageManager } from './utils/get-pkg-manager.js';
+import { isFolderEmpty } from './utils/is-folder-empty.js';
+import { validateNpmName } from './utils/validate-pkg.js';
 import packageJson from "./package.json" assert { type: "json"}
 import { createApp } from './create-app.js';
 
@@ -52,6 +52,8 @@ async function init() {
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
         .option("-e, --empty", "Initialize empty express app with template")
+        .option("-ts, --typescript", "Initialize express app with typescript template")
+        .option("--basic", "Initialize with basic template of express app")
         .option('--disable-git', `Skip initializing a git repository.`)
         .action((name) => {
             if (name && !name.startsWith('--no-')) {
@@ -122,61 +124,56 @@ async function init() {
         process.exit(1)
     }
 
-    // const preferences:any = {
-    //     useEjs: false,
-    //     mongoose:false
-    // }
+    const prefs = (conf.get('prefs') || {}) as Record<
+        string,
+        boolean | string
+    >
 
-    // const getPrefOrDefault = (opt: string) => preferences[opt];
+    const defaults: typeof prefs = {
+        typescript: true
+    }
 
-    // console.log(opts)
+    const getPrefOrDefault = (opt: string) => prefs[opt] || defaults[opt];
 
-    // if (!opts.mongoose && !args.includes('--no-mongoose')) {
-    //     // if (skipPrompt) {
-    //     //     opts.eslint = getPrefOrDefault('eslint')
-    //     // } else {
-    //     const { eslint } = await prompts({
-    //         onState: onPromptState,
-    //         type: 'toggle',
-    //         name: 'eslint',
-    //         message: `Would you like to use ${chalk.blue('Mongoose')}?`,
-    //         initial: getPrefOrDefault('mongoose'),
-    //         active: 'Yes',
-    //         inactive: 'No',
-    //     })
-    //     opts.mongoose = Boolean(eslint)
-    //     preferences.mongoose = Boolean(eslint)
-    //     // }
-    // }
+    /** Printing note ts is not available for basic template */
+    opts.typescript
+        && opts.basic
+        && console.log(`${chalk.bgYellow("!Note:")} Currently typescript is not available for ${chalk.blue("basic")} template`);
 
-    // if (!opts.useEjs && !args.includes('--no-ejs')) {
-    //     // if (skipPrompt) {
-    //     //     opts.eslint = getPrefOrDefault('eslint')
-    //     // } else {
-    //     const styledEjs = chalk.blue('Ejs')
-    //     const { eslint } = await prompts({
-    //         onState: onPromptState,
-    //         type: 'toggle',
-    //         name: 'eslint',
-    //         message: `Would you like to use ${styledEjs}?`,
-    //         initial: getPrefOrDefault('useEjs'),
-    //         active: 'Yes',
-    //         inactive: 'No',
-    //     })
-    //     opts.useEjs = Boolean(eslint)
-    //     preferences.useEjs = Boolean(eslint)
-    //     // }
-    // }
+    if (!opts.basic && !opts.typescript && !args.includes('--no-typescript')) {
+        const styledTypeScript = chalk.blue('TypeScript')
+        const { typescript } = await prompts(
+            {
+                type: 'toggle',
+                name: 'typescript',
+                message: `Would you like to use ${styledTypeScript}?`,
+                initial: getPrefOrDefault('typescript'),
+                active: 'Yes',
+                inactive: 'No',
+            },
+            {
+                onCancel: () => {
+                    console.error('Exiting.')
+                    process.exit(1)
+                },
+            }
+        )
+        opts.typescript = Boolean(typescript)
+        prefs.typescript = Boolean(typescript)
+    }
 
     try {
         await createApp({
             appPath: projectName,
-            packageManager:packageManager,
+            packageManager: packageManager,
+            typescript: opts.typescript,
             empty: opts.empty,
-            disableGit: opts.disableGit
+            disableGit: opts.disableGit,
+            basic: opts.basic
         })
+        conf.set("prefs", prefs)
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
     // process.exit(0);
 
