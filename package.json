@@ -8,7 +8,7 @@
     "url": "https://github.com/Saifkhan-rkp/backforge.git"
   },
   "bin": {
-    "by-express": "dist/index.js"
+    "backforge": "dist/index.js"
   },
   "files": [
     "dist"
