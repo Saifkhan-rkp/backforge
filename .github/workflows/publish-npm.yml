@@ -6,7 +6,7 @@ on:
       - main
     tags: ["v*"]
   release:
-    types: [published, released, edited]
+    types: [published]
     
 jobs:
   publish:

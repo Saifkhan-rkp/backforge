@@ -1,7 +1,7 @@
 {
   "name": "backforge",
   "version": "1.0.1",
-  "description": "A Command Line tool for creating express api web server",
+  "description": "A Command Line tool for creating a template of express api web server",
   "type": "module",
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
     "command-line",
     "tool",
     "express-app",
-    "create"
+    "create express template",
+    "backend", "template", "express-boilerplate", "boilerplate"
   ],
   "author": "Saif Khan <saifkhan.otw@gmail.com>",
   "license": "MIT",

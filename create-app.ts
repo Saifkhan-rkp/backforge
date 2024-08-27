@@ -63,7 +63,7 @@ export async function createApp({
     const isOnline = !useYarn || (await checkOnline())
     const originalDirectory = process.cwd()
 
-    console.log(`Creating a new express app in ${chalk.green(root)} with ${chalk.yellow("by-express")}.`)
+    console.log(`Creating a new express app in ${chalk.green(root)} with ${chalk.yellow("Backforge")}.`)
     console.log()
 
     process.chdir(root)
