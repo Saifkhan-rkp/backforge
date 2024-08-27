@@ -1,46 +1,46 @@
 # Backforge
 
-backforge is templating tool for backend development. it generates express based template.
+**Backforge** is a templating tool designed for backend development, specifically for generating Express-based templates.
 
-## execution
+## Getting Started
 
-simply open a command prompt run a command with your package manager
+To get started with Backforge, open your command prompt and run one of the following commands using your preferred package manager:
 
-    ```bash
+```bash
 
-        npx backforge
-        #or
-        yarn create backforge
-        #or
-        pnpx create backforge
+    npx backforge
+    #or
+    yarn create backforge
+    #or
+    pnpx create backforge
 
-    ```
+```
+After running the command, you may be prompted to answer a few questions in the terminal. Once completed, you'll have a ready-to-use Express template.
 
-It may ask few question in cmd and you get ready to use express template
+## Command options
 
-## available options with commmand
-
-    ```bash
-        npx backforge #[options] following must allowed
+```bash
+    npx backforge #[options] following must allowed
         -js, --javascript #Initialize express app with typescript template
         --basic           #Initialize with basic template of express app
         --disable-git     #Skip initializing a git repository.
         -h, --help        #Display this help message.
-    ```
+```
 
 ## available templates
 
-backforge currently offers two types of temlates.
+Backforge currently offers two types of templates:
 
-    * basic
-        - js
-    * default
-        - js
-        - ts
+* basic
+    - js
+
+* default
+    - js
+    - ts
 
 ### basic template
 
-basic template contains following files and folder structure
+The basic template includes the following file and folder structure:
 
     /template
     |
@@ -70,7 +70,7 @@ basic template contains following files and folder structure
 
 ### default template
 
-default template comes with typescript as well as javascript in following structure:
+The default template is available in both TypeScript and JavaScript and includes the following structure:
 
     /default
     |
