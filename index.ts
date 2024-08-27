@@ -38,7 +38,7 @@ const onPromptState = (state: {
 
 async function init() {
 
-    const conf = new Conf({ projectName: "lets-go-with-express" })
+    const conf = new Conf({ projectName: "backforge" })
 
     let projectName: string | undefined;
 
@@ -46,13 +46,13 @@ async function init() {
         .version(
             packageJson.version,
             '-v, --version',
-            'Output the current version of create-by-express.'
+            'Output the current version of backforge.'
         )
         .arguments('[project-directory]')
         .usage(`${chalk["green"]('[project-directory]')} [options]`)
         .helpOption('-h, --help', 'Display this help message.')
-        .option("-e, --empty", "Initialize empty express app with template")
-        .option("-ts, --typescript", "Initialize express app with typescript template")
+        // .option("-e, --empty", "Initialize empty express app with template")
+        .option("-js, --javascript", "Initialize express app with javascript template")
         .option("--basic", "Initialize with basic template of express app")
         .option('--disable-git', `Skip initializing a git repository.`)
         .action((name) => {
@@ -130,7 +130,8 @@ async function init() {
     >
 
     const defaults: typeof prefs = {
-        typescript: true
+        typescript: true,
+        javascript:false
     }
 
     const getPrefOrDefault = (opt: string) => prefs[opt] || defaults[opt];
@@ -140,7 +141,7 @@ async function init() {
         && opts.basic
         && console.log(`${chalk.bgYellow("!Note:")} Currently typescript is not available for ${chalk.blue("basic")} template`);
 
-    if (!opts.basic && !opts.typescript && !args.includes('--no-typescript')) {
+    if (!opts.basic && !opts.javascript && !opts.typescript && !args.includes('--no-typescript')) {
         const styledTypeScript = chalk.blue('TypeScript')
         const { typescript } = await prompts(
             {
@@ -159,6 +160,7 @@ async function init() {
             }
         )
         opts.typescript = Boolean(typescript)
+        opts.javascript = !Boolean(typescript)
         prefs.typescript = Boolean(typescript)
     }
 
