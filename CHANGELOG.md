@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0](https://github.com/Saifkhan-rkp/backforge/compare/v1.0.1...v2.0.0) (2024-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* readme changes for reference
+* readme file updated for templates as well as backforge
+* remove unuseable command options
+
+### Features
+
+* readme file updated for templates as well as backforge ([aa65bc2](https://github.com/Saifkhan-rkp/backforge/commit/aa65bc2fb48bb50f7e35081ef668dadcf12e2532))
+
+
+### Bug Fixes
+
+* readme changes for reference ([5d1eadd](https://github.com/Saifkhan-rkp/backforge/commit/5d1eadd0f3536340f037c9351748e069b23dbd40))
+* remove unuseable command options ([aa65bc2](https://github.com/Saifkhan-rkp/backforge/commit/aa65bc2fb48bb50f7e35081ef668dadcf12e2532))
+
 ## [1.0.1](https://github.com/Saifkhan-rkp/backforge/compare/v1.0.0...v1.0.1) (2024-08-26)
 
 
