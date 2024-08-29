@@ -25,7 +25,14 @@
     "tool",
     "express-app",
     "create express template",
-    "backend", "template", "express-boilerplate", "boilerplate"
+    "backend",
+    "template",
+    "express-boilerplate",
+    "boilerplate",
+    "Express API CLI tool",
+    "Express API generator",
+    "CLI tool for Express.js",
+    "presetup tool"
   ],
   "author": "Saif Khan <saifkhan.otw@gmail.com>",
   "license": "MIT",
