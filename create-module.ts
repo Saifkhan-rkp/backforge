@@ -1,10 +1,10 @@
 import { cwd } from "process";
 import { ModuleTemplateArgs } from "./templates/types";
-import { readdir } from "fs/promises";
-import glob from "fast-glob";
+import fs from "fs/promises";
 import { copy, getSrcFilesAndDir } from "./utils/copy.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { Sema } from "async-sema";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
@@ -13,16 +13,16 @@ dirname
 
 export async function cretaeModule({ moduleName, mode, dest }: ModuleTemplateArgs) {
     const projDir = cwd();
-    let copyFolder = dest? dest: "modules";
+    let destFolder = dest? dest: "modules";
 
     if (!dest) {
         const source = ["**/modules", "!node_modules", "!dist"]
         const findModuleDir = await getSrcFilesAndDir(source, projDir, "dirs")
         if (findModuleDir.length > 0) {
-            copyFolder = findModuleDir[0]
+            destFolder = findModuleDir[0]
         }
     }
-    const moduleDir = join(projDir, copyFolder, moduleName)
+    const moduleDir = join(projDir, destFolder, moduleName)
 
     const templatePath = join(__dirname, "templates", "modules", mode);
 
@@ -32,24 +32,27 @@ export async function cretaeModule({ moduleName, mode, dest }: ModuleTemplateArg
             return name.replace("module", moduleName);
         }
     })
+    
+    const moduleFiles = await getSrcFilesAndDir(["**"], moduleDir, "files");
 
-    // const writeSema = new Sema(8, { capacity: files.length });
-    // await Promise.all(
-    //   files.map(async (file) => {
-    //     await writeSema.acquire();
-    //     const filePath = path.join(root, file);
-    //     if ((await fs.stat(filePath)).isFile()) {
-    //       await fs.writeFile(
-    //         filePath,
-    //         (await fs.readFile(filePath, "utf8")).replace(
-    //           `@/`,
-    //           `${importAlias.replace(/\*/g, "")}`,
-    //         ),
-    //       );
-    //     }
-    //     writeSema.release();
-    //   }),
-    // );
+    const writeModNameSema = new Sema(8, { capacity: moduleFiles.length });
+    await Promise.all(
+      moduleFiles.map(async (file) => {
+        await writeModNameSema.acquire();
+        const filePath = join(moduleDir, file);
+        
+        if ((await fs.stat(filePath)).isFile()) {
+          await fs.writeFile(
+            filePath,
+            (await fs.readFile(filePath, "utf8"))
+            .replace(/test/g, moduleName)
+            .replace(/Test/g, moduleName[0].toUpperCase()+moduleName.slice(1))
+            .replace(/module/g, moduleName),
+          );
+        }
+        writeModNameSema.release();
+      }),
+    );
 
 }
 
