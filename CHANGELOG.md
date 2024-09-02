@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.1.0](https://github.com/Saifkhan-rkp/backforge/compare/v2.0.0...v2.1.0) (2024-09-02)
+
+
+### Features
+
+* create module feature implemented ([8f2510c](https://github.com/Saifkhan-rkp/backforge/commit/8f2510c4021cd017faa825a0292ece34d87c67df))
+* create module updates variable and imports as per module name ([5f13e20](https://github.com/Saifkhan-rkp/backforge/commit/5f13e204d5f9869746a18e5ad5d626630d8aef4c))
+* module generation developed available in both js and ts ([2f2f5bc](https://github.com/Saifkhan-rkp/backforge/commit/2f2f5bc217b585ba930ba59aa3e53148024c1155))
+* module templates added ([af95e9e](https://github.com/Saifkhan-rkp/backforge/commit/af95e9ed02c8c0a99279221bcc8e51c3be246150))
+
+
+### Bug Fixes
+
+* module template code change ([2f2f5bc](https://github.com/Saifkhan-rkp/backforge/commit/2f2f5bc217b585ba930ba59aa3e53148024c1155))
+* template spelings and code fixes ([2f2f5bc](https://github.com/Saifkhan-rkp/backforge/commit/2f2f5bc217b585ba930ba59aa3e53148024c1155))
+
 ## [2.0.0](https://github.com/Saifkhan-rkp/backforge/compare/v1.0.1...v2.0.0) (2024-08-27)
 
 
