@@ -20,6 +20,4 @@ class NotFoundError extends ApiError {
     }
 }
 
-module.exports = ApiError;
-
-module.exports = NotFoundError;
+module.exports = { ApiError, NotFoundError };
