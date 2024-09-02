@@ -12,6 +12,8 @@ import { isFolderEmpty } from './utils/is-folder-empty.js';
 import { validateNpmName } from './utils/validate-pkg.js';
 import packageJson from "./package.json" assert { type: "json"}
 import { createApp } from './create-app.js';
+import { createModule } from './create-module.js';
+import { ModuleTemplateArgs } from './templates/types.js';
 
 // const _chalk = await import("chalk").then(m=>m.default);
 
@@ -35,38 +37,39 @@ const onPromptState = (state: {
     }
 }
 
+const conf = new Conf({ projectName: "backforge" })
 
-async function init() {
+let projectName: string | undefined;
+const program: Command = new Command(packageJson.name)
+    .version(
+        packageJson.version,
+        '-v, --version',
+        'Output the current version of backforge.'
+    )
+    .arguments('[project-directory]')
+    .usage(`${chalk["green"]('[project-directory]')} [options]`)
+    .helpOption('-h, --help', 'Display this help message.')
+    // .option("-e, --empty", "Initialize empty express app with template")
+    .option("-m, --module <module-name>", "Creates a module for default express template of backforge")
+    .option("-d, --dest <destination>", "Destination path for module creation note: it does not work app generation")
+    .option("-js, --javascript", "Initialize express app with javascript template")
+    .option("--basic", "Initialize with basic template of express app")
+    .option('--disable-git', `Skip initializing a git repository.`)
+    .action((name) => {
+        if (name && !name.startsWith('--no-')) {
+            projectName = name
+        }
+    })
+    .allowUnknownOption()
+    .parse(process.argv);
 
-    const conf = new Conf({ projectName: "backforge" })
+const opts = program.opts()
+const { args } = program;
+const packageManager: PackageManager = getPkgManager();
 
-    let projectName: string | undefined;
 
-    const program: Command = new Command(packageJson.name)
-        .version(
-            packageJson.version,
-            '-v, --version',
-            'Output the current version of backforge.'
-        )
-        .arguments('[project-directory]')
-        .usage(`${chalk["green"]('[project-directory]')} [options]`)
-        .helpOption('-h, --help', 'Display this help message.')
-        // .option("-e, --empty", "Initialize empty express app with template")
-        .option("-js, --javascript", "Initialize express app with javascript template")
-        .option("--basic", "Initialize with basic template of express app")
-        .option('--disable-git', `Skip initializing a git repository.`)
-        .action((name) => {
-            if (name && !name.startsWith('--no-')) {
-                projectName = name
-            }
-        })
-        .allowUnknownOption()
-        .parse(process.argv);
+async function app_init() {
 
-    const opts = program.opts()
-    const { args } = program;
-
-    const packageManager: PackageManager = getPkgManager();
 
     if (typeof projectName === "string") {
         projectName = projectName.trim()
@@ -131,7 +134,7 @@ async function init() {
 
     const defaults: typeof prefs = {
         typescript: true,
-        javascript:false
+        javascript: false
     }
 
     const getPrefOrDefault = (opt: string) => prefs[opt] || defaults[opt];
@@ -181,4 +184,49 @@ async function init() {
 
 }
 
-init();
+async function moduel_init() {
+    const isModuleName = typeof opts.module === "string";
+    if (opts.module === true || (isModuleName && !/^[a-z][a-z0-9_]*$/.test(opts.module))) {
+        console.error(chalk.red("Please provide module name or valid module name (ex. users, stroy_blog, blog2)"));
+        console.error("\nExiting..");
+        process.exit(1);
+    }
+    if (isModuleName) {
+        opts.module.trim();
+        const moduleArgs: ModuleTemplateArgs = {
+            moduleName: opts.module,
+        }
+        if (typeof opts.dest === "string") {
+            if (/^((\/?[a-zA-Z0-9-_]+)+|\/)$/gm.test(opts.dest)) {
+                opts.dest.trim()
+                moduleArgs.dest = opts.dest;
+            } else {
+                console.error(chalk.red("Error: "), "Invalid destination (not)provided")
+                process.exit(1);
+            }
+        }
+
+        try {
+            console.log(`\nInitialized generation of module ${chalk.blue(opts.module)}`)
+            await createModule(moduleArgs);
+        } catch (error) {
+            console.error(error)
+
+        }
+    } else {
+        console.error(chalk.red("Error: "), "Module name not provided")
+    }
+}
+
+async function exec() {
+
+    if (!opts.module || projectName) {
+        await app_init();
+    }
+    if (opts.module) {
+        await moduel_init();
+    }
+}
+
+exec();
+// app_init();

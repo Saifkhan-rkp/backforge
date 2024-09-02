@@ -40,7 +40,6 @@ export async function createApp({
     const template: TemplateType = `${basic ? "basic" : "default"}${empty ? '-empty' : ''}`
 
     const root = resolve(appPath)
-    console.log(root, dirname(root));
     if (!(await isWriteable(dirname(root)))) {
         console.error(
             'The application path is not writable, please check folder permissions and try again.'

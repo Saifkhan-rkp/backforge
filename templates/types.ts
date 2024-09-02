@@ -22,3 +22,8 @@ export interface InstallTemplateArgs {
     template: TemplateType;
     mode: TemplateMode;
 }
+
+export interface ModuleTemplateArgs {
+    moduleName: string;
+    dest?: string
+}

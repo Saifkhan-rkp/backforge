@@ -1,20 +1,21 @@
-import path, { dirname } from "path";
+import path, { dirname, extname, join } from "path";
 import chalk from "chalk";
 import os from "os";
 import fs from "fs/promises";
-import { GetTemplateFileArgs, InstallTemplateArgs } from "./types.js";
-import { copy } from "../utils/copy.js";
+import { GetTemplateFileArgs, InstallTemplateArgs, TemplateMode } from "./types.js";
+import { copy, getSrcFilesAndDir } from "../utils/copy.js";
 import { fileURLToPath } from "url";
 import { install } from "../utils/install.js";
+import { Sema } from "async-sema";
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+let appMode: TemplateMode;
 
 export function getTemplateFile({ file, template, mode }: GetTemplateFileArgs) {
     return path.join(__dirname, template, mode, file)
 }
-
 
 export const installTemplate = async ({
     appName,
@@ -26,7 +27,7 @@ export const installTemplate = async ({
 }: InstallTemplateArgs) => {
 
     console.log(chalk.bold(`Using ${packageManager}.`));
-
+    appMode = mode;
     /**
      * Copy the template files to the target directory.
      */
@@ -85,9 +86,9 @@ export const installTemplate = async ({
 
     if (mode === "ts") {
         packageJson.scripts = {
-            dev:"nodemon index.ts",
-            start:"node dist/index.js",
-            build:"tsc"
+            dev: "nodemon index.ts",
+            start: "node dist/index.js",
+            build: "tsc"
         }
         packageJson.devDependencies = {
             ...packageJson.devDependencies,
@@ -120,4 +121,71 @@ export const installTemplate = async ({
     console.log();
 
     await install(packageManager, isOnline).catch(err => console.log("Seems Insall giving problem here \n Try run ", chalk.yellow(err), " in your project directory"));
+}
+
+export async function genModule({
+    moduleName,
+    dest,
+    projDir,
+}: {
+    moduleName: string;
+    dest: string | undefined;
+    projDir: string;
+}) {
+    let destFolder = dest ? dest : "modules";
+
+    if (!dest) {
+        console.log("\nDestination not provided...")
+        console.log(`Searching modules folder into ${chalk.blue(projDir)}`)
+        const source = ["**/modules", "!node_modules", "!dist"]
+        const findModuleDir = await getSrcFilesAndDir(source, projDir, "dirs")
+        if (findModuleDir.length > 0) {
+            destFolder = findModuleDir[0]
+        }
+    }
+
+    /** default setting as Typescript */
+    let mode: string = "ts";
+
+    const files = await getSrcFilesAndDir(["index.??", "src/index.??", "server.??"], projDir, "files");
+
+    if (files.length > 0) {
+        mode = extname(files[0]) === ".js" ? "js" : "ts";
+    }
+
+    const moduleDir = join(projDir, destFolder, moduleName);
+    const templatePath = join(__dirname, "mod-template", appMode ? appMode : mode);
+
+    console.log(`\nCopying module files...`);
+
+    await copy(["**"], moduleDir, {
+        cwd: templatePath,
+        rename(name) {
+            return name.replace("test", moduleName);
+        }
+    })
+
+    const moduleFiles = await getSrcFilesAndDir(["**"], moduleDir, "files");
+
+    const writeModNameSema = new Sema(8, { capacity: moduleFiles.length });
+    await Promise.all(
+        moduleFiles.map(async (file) => {
+            await writeModNameSema.acquire();
+            const filePath = join(moduleDir, file);
+
+            if ((await fs.stat(filePath)).isFile()) {
+                await fs.writeFile(
+                    filePath,
+                    (await fs.readFile(filePath, "utf8"))
+                        .replace(/test/g, moduleName)
+                        .replace(/Test/g, moduleName[0].toUpperCase() + moduleName.slice(1))
+                        .replace(/module/g, moduleName),
+                );
+            }
+            writeModNameSema.release();
+        }),
+    );
+
+    console.log(`\n${chalk.blue(moduleName)} module created into ${chalk.yellow(moduleDir)}`)
+    console.log();
 }

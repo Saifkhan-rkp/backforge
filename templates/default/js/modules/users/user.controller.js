@@ -4,7 +4,7 @@
  */
 
 const catchAsync = require("../../utils/catchAsync");
-const NotFoundError = require("../../configs/errors");
+const { NotFoundError } = require("../../configs/errors");
 const { getUser } = require("./user.service");
 
 /** 

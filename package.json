@@ -28,11 +28,16 @@
     "backend",
     "template",
     "express-boilerplate",
-    "boilerplate"
+    "boilerplate",
+    "Express API CLI tool",
+    "Express API generator",
+    "CLI tool for Express.js",
+    "presetup tool"
   ],
   "author": "Saif Khan <saifkhan.otw@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "async-sema": "^3.1.1",
     "chalk": "^4.1.2",
     "commander": "^12.1.0",
     "conf": "^13.0.1",
