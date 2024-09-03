@@ -1,8 +1,8 @@
-import path, { dirname, extname, join } from "path";
+import path, { dirname, extname } from "path";
 import chalk from "chalk";
 import os from "os";
 import fs from "fs/promises";
-import { GetTemplateFileArgs, InstallTemplateArgs, TemplateMode } from "./types.js";
+import { GetTemplateFileArgs, InstallTemplateArgs, ModuleTemplate, TemplateMode } from "./types.js";
 import { copy, getSrcFilesAndDir } from "../utils/copy.js";
 import { fileURLToPath } from "url";
 import { install } from "../utils/install.js";
@@ -32,7 +32,7 @@ export const installTemplate = async ({
      * Copy the template files to the target directory.
      */
     console.log("\nInitializing project with template:", template, "\n");
-
+    console.log("debug template & dirname", __dirname, template, path.join(__dirname, template))
     const templatePath = path.join(__dirname, template, mode);
     const copySource = ["**"]
 
@@ -123,16 +123,21 @@ export const installTemplate = async ({
     await install(packageManager, isOnline).catch(err => console.log("Seems Insall giving problem here \n Try run ", chalk.yellow(err), " in your project directory"));
 }
 
-export async function genModule({
+export const genModule = async ({
     moduleName,
     dest,
     projDir,
+    modulePath,
+    mode
 }: {
     moduleName: string;
     dest: string | undefined;
     projDir: string;
-}) {
+    modulePath: ModuleTemplate;
+    mode: TemplateMode;
+}) => {
     let destFolder = dest ? dest : "modules";
+    let templateMode = appMode ? appMode : mode;
 
     if (!dest) {
         console.log("\nDestination not provided...")
@@ -144,20 +149,16 @@ export async function genModule({
         }
     }
 
-    /** default setting as Typescript */
-    let mode: string = "ts";
+    // const files = await getSrcFilesAndDir(["index.??", "src/index.??", "server.??"], projDir, "files");
 
-    const files = await getSrcFilesAndDir(["index.??", "src/index.??", "server.??"], projDir, "files");
+    // if (files.length > 0) {
+    //     mode = extname(files[0]) === ".js" ? "js" : "ts";
+    // }
 
-    if (files.length > 0) {
-        mode = extname(files[0]) === ".js" ? "js" : "ts";
-    }
-
-    const moduleDir = join(projDir, destFolder, moduleName);
-    const templatePath = join(__dirname, "mod-template", appMode ? appMode : mode);
+    const moduleDir = path.join(projDir, destFolder, moduleName);
+    const templatePath = path.join(__dirname, modulePath, templateMode);
 
     console.log(`\nCopying module files...`);
-
     await copy(["**"], moduleDir, {
         cwd: templatePath,
         rename(name) {
@@ -171,7 +172,7 @@ export async function genModule({
     await Promise.all(
         moduleFiles.map(async (file) => {
             await writeModNameSema.acquire();
-            const filePath = join(moduleDir, file);
+            const filePath = path.join(moduleDir, file);
 
             if ((await fs.stat(filePath)).isFile()) {
                 await fs.writeFile(
