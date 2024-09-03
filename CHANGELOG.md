@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/Saifkhan-rkp/backforge/compare/v2.1.0...v2.1.1) (2024-09-03)
+
+
+### Bug Fixes
+
+* module template path undefined error fixed ([94d4965](https://github.com/Saifkhan-rkp/backforge/commit/94d49653f5f42150904ce6f7abaf0a3a2082457d))
+
 ## [2.1.0](https://github.com/Saifkhan-rkp/backforge/compare/v2.0.0...v2.1.0) (2024-09-02)
 
 
