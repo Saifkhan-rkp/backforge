@@ -1,4 +1,4 @@
-#! /usr/bin/env node --no-warnings
+#!/usr/bin/env node --no-warnings
 
 import chalk from 'chalk'
 import Conf from 'conf'

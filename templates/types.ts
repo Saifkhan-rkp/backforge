@@ -6,6 +6,8 @@ export type TemplateType =
     | "basic"
     | "basic-empty";
 
+export type ModuleTemplate = "mod-template";
+
 export type TemplateMode = "js" | "ts";
 
 export interface GetTemplateFileArgs {
