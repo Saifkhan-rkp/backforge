@@ -20,5 +20,5 @@ jobs:
       - name: Release with release-please
         uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           release-type: node
