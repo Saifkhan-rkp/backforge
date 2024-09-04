@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/Saifkhan-rkp/backforge/compare/v2.1.1...v2.1.2) (2024-09-04)
+
+
+### Bug Fixes
+
+* **ci:** ci workflow fixed by using PAT ([4a8f0ff](https://github.com/Saifkhan-rkp/backforge/commit/4a8f0ff6e7710aab2568476e03989cb15acf0787))
+
 ## [2.1.1](https://github.com/Saifkhan-rkp/backforge/compare/v2.1.0...v2.1.1) (2024-09-03)
 
 
