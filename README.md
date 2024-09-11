@@ -40,9 +40,7 @@ To get started with Backforge, open your command prompt and run one of the follo
 
     npx backforge
     #or
-    yarn create backforge
-    #or
-    pnpx create backforge
+    yarn dlx backforge
 
 ```
 
