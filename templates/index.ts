@@ -32,7 +32,7 @@ export const installTemplate = async ({
      * Copy the template files to the target directory.
      */
     console.log("\nInitializing project with template:", template, "\n");
-    console.log("debug template & dirname", __dirname, template, path.join(__dirname, template))
+
     const templatePath = path.join(__dirname, template, mode);
     const copySource = ["**"]
 
@@ -179,8 +179,7 @@ export const genModule = async ({
                     filePath,
                     (await fs.readFile(filePath, "utf8"))
                         .replace(/test/g, moduleName)
-                        .replace(/Test/g, moduleName[0].toUpperCase() + moduleName.slice(1))
-                        .replace(/module/g, moduleName),
+                        .replace(/Test/g, moduleName[0].toUpperCase() + moduleName.slice(1)),
                 );
             }
             writeModNameSema.release();
