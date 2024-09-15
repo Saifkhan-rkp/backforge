@@ -179,8 +179,7 @@ export const genModule = async ({
                     filePath,
                     (await fs.readFile(filePath, "utf8"))
                         .replace(/test/g, moduleName)
-                        .replace(/Test/g, moduleName[0].toUpperCase() + moduleName.slice(1))
-                        .replace(/module/g, moduleName),
+                        .replace(/Test/g, moduleName[0].toUpperCase() + moduleName.slice(1)),
                 );
             }
             writeModNameSema.release();
