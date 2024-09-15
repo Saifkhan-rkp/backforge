@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.3](https://github.com/Saifkhan-rkp/backforge/compare/v2.1.2...v2.1.3) (2024-09-15)
+
+
+### Bug Fixes
+
+* **gen module:** fixed module keyword chages to module name in generated module files ([50bb513](https://github.com/Saifkhan-rkp/backforge/commit/50bb5132018adc5032bc523257cd49d4cdae6044))
+* **templates:** default js modules chages and mod-templte js httpStatus package import fix ([00fd83e](https://github.com/Saifkhan-rkp/backforge/commit/00fd83e5bad4153ba7d3902b13a55b89f2f3b97c))
+
 ## [2.1.2](https://github.com/Saifkhan-rkp/backforge/compare/v2.1.1...v2.1.2) (2024-09-04)
 
 
